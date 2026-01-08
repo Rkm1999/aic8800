@@ -1,3 +1,5 @@
+EXTRA_CFLAGS += -Wno-error=missing-prototypes -Wno-error=incompatible-pointer-types
+EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
 CONFIG_AIC8800_BTLPM_SUPPORT := m
 CONFIG_AIC8800_WLAN_SUPPORT := m
 CONFIG_AIC_WLAN_SUPPORT := m
@@ -25,45 +27,30 @@ export CONFIG_PLATFORM_AMLOGIC = n
 export CONFIG_PLATFORM_UBUNTU = y
 
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
-ARCH = arm64
-KDIR = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/kernel
-CROSS_COMPILE = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 ccflags-y += -DANDROID_PLATFORM
 ccflags-y += -DCONFIG_PLATFORM_ROCKCHIP
 endif
 
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP2), y)
-KDIR := /home/yaya/E/Rockchip/3126/Android6/kernel
-ARCH ?= arm
-CROSS_COMPILE ?= /home/yaya/E/Rockchip/3288/Android5/rk3288_JHY/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
 ccflags-y += -DANDROID_PLATFORM
 ccflags-y += -DCONFIG_PLATFORM_ROCKCHIP2
 endif
 
 ifeq ($(CONFIG_PLATFORM_ALLWINNER), y)
-KDIR  = /home/yaya/E/Allwinner/A133/Android10/linux-4.9
-ARCH = arm64
-CROSS_COMPILE = /home/yaya/E/Allwinner/r818/Android10/lichee/out/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 export CONFIG_SUPPORT_LPM = y
 ccflags-y += -DANDROID_PLATFORM
 endif
 
 ifeq ($(CONFIG_PLATFORM_AMLOGIC), y)
-ARCH = arm
-CROSS_COMPILE = /home/yaya/D/Workspace/CyberQuantum/JinHaoYue/amls905x3/SDK/20191101-0tt-asop/android9.0/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androidkernel-
-KDIR = /home/yaya/D/Workspace/CyberQuantum/JinHaoYue/amls905x3/SDK/20191101-0tt-asop/android9.0/out/target/product/u202/obj/KERNEL_OBJ/
 ccflags-y += -DANDROID_PLATFORM
 export CONFIG_SUPPORT_LPM = y
 endif
 
 ifeq ($(CONFIG_PLATFORM_UBUNTU), y)
-KDIR  = /lib/modules/$(shell uname -r)/build
 PWD   = $(shell pwd)
 KVER = $(shell uname -r)
 MODDESTDIR = /lib/modules/$(KVER)/kernel/drivers/net/wireless/aic8800
 SUBARCH = $(shell uname -m | sed -e s/i.86/i386/ -e s/armv.l/arm/ -e s/aarch64/arm64/)
-ARCH ?= $(SUBARCH)
-CROSS_COMPILE ?=
 endif
 ###########################################
 

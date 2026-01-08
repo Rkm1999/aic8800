@@ -20,7 +20,7 @@
 #include "aic_bsp_driver.h"
 #include <linux/version.h>
 #ifdef CONFIG_PLATFORM_ROCHCHIP
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif /* CONFIG_PLATFORM_ROCHCHIP */
 
 

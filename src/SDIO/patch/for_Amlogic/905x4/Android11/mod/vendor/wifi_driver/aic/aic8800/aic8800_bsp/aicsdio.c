@@ -21,7 +21,7 @@
 #include <linux/version.h>
 #include <linux/delay.h>
 #ifdef CONFIG_PLATFORM_ROCKCHIP
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif /* CONFIG_PLATFORM_ROCKCHIP */
 
 

@@ -1,3 +1,5 @@
+EXTRA_CFLAGS += -Wno-error=missing-prototypes -Wno-error=incompatible-pointer-types
+EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
 CONFIG_AIC8800_BTLPM_SUPPORT = m
 
 obj-$(CONFIG_AIC8800_BTLPM_SUPPORT) := aic8800_btlpm.o
@@ -9,7 +11,7 @@ CONFIG_PLATFORM_ROCKCHIP ?= n
 CONFIG_PLATFORM_ROCKCHIP2 ?= n
 CONFIG_PLATFORM_ALLWINNER ?= n
 CONFIG_PLATFORM_AMLOGIC ?= n
-CONFIG_PLATFORM_UBUNTU ?= y
+CONFIG_PLATFORM_UBUNTU ?= n
 
 
 CONFIG_SUPPORT_LPM ?= n
@@ -26,26 +28,17 @@ ccflags-y += -DAIC_TRACE_INCLUDE_PATH=$(src)
 ccflags-$(CONFIG_AUTO_PM) += -DCONFIG_AUTO_PM
 
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
-ARCH = arm64
-KDIR = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/kernel
-CROSS_COMPILE = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 ccflags-$(CONFIG_PLATFORM_ROCKCHIP) += -DCONFIG_PLATFORM_ROCKCHIP
 ccflags-y += -DANDROID_PLATFORM
 endif
 
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP2), y)
-ARCH = arm64
-KDIR = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/kernel
-CROSS_COMPILE = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 ccflags-$(CONFIG_PLATFORM_ROCKCHIP2) += -DCONFIG_PLATFORM_ROCKCHIP2
 ccflags-y += -DANDROID_PLATFORM
 endif
 
 ifeq ($(CONFIG_PLATFORM_ALLWINNER), y)
 ccflags-$(CONFIG_PLATFORM_ALLWINNER) += -DCONFIG_PLATFORM_ALLWINNER
-KDIR  ?= /home/yaya/E/Allwinner/R818/R818/AndroidQ/lichee/kernel/linux-4.9/
-ARCH ?= arm64
-CROSS_COMPILE ?= /home/yaya/E/Allwinner/R818/R818/AndroidQ/android/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 ccflags-y += -DANDROID_PLATFORM
 endif
 
@@ -55,12 +48,9 @@ ccflags-y += -DANDROID_PLATFORM
 endif
 
 ifeq ($(CONFIG_PLATFORM_UBUNTU), y)
-KDIR  ?= /lib/modules/$(shell uname -r)/build
 PWD   ?= $(shell pwd)
 KVER ?= $(shell uname -r)
 MODDESTDIR ?= /lib/modules/$(KVER)/kernel/drivers/net/wireless/
-ARCH ?= x86_64
-CROSS_COMPILE ?=
 endif
 
 

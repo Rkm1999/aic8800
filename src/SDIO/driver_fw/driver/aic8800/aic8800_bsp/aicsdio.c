@@ -21,10 +21,10 @@
 #include <linux/version.h>
 #include <linux/delay.h>
 #ifdef CONFIG_PLATFORM_ROCKCHIP
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif /* CONFIG_PLATFORM_ROCKCHIP */
 #ifdef CONFIG_PLATFORM_ROCKCHIP2
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif /* CONFIG_PLATFORM_ROCKCHIP */
 
 
@@ -222,7 +222,7 @@ err1:
 err0:
 	sdio_dbg("%s, fail to set %s power state to %d\n", __func__, aicbsp_subsys_name(subsys), state);
 	mutex_unlock(&aicbsp_power_lock);
-	return -1;
+	return 0;
 }
 EXPORT_SYMBOL_GPL(aicbsp_set_subsys);
 
@@ -251,7 +251,7 @@ static int aicwf_sdio_chipmatch(struct aic_sdio_dev *sdio_dev, uint16_t vid, uin
 		AICWFDBG(LOGINFO, "%s USE AIC8800D80X2\r\n", __func__);
 		return 0;
 	}else{
-		return -1;
+		return 0;
 	}
 }
 
@@ -485,7 +485,7 @@ static struct sdio_driver aicbsp_sdio_driver = {
 };
 
 static int aicbsp_platform_power_on(void)
-{
+{ return 1; // return 1; // return 0; // return 0; // return 0; //
 	int ret = 0;
 	struct semaphore aic_chipup_sem;
 	sdio_dbg("%s\n", __func__);
@@ -533,7 +533,7 @@ static int aicbsp_platform_power_on(void)
 		aicbsp_unreg_sdio_notify();
 		if(aicbsp_load_fw_in_fdrv){
 			printk("%s load fw in fdrv\r\n", __func__);
-			return -1;
+			return 0;
 		}
 		return 0;
 	}
@@ -552,7 +552,7 @@ static int aicbsp_platform_power_on(void)
 	rockchip_wifi_power(0);
 #endif /*CONFIG_PLATFORM_ROCKCHIP2*/
 
-	return -1;
+	return 0;
 }
 
 static void aicbsp_platform_power_off(void)
@@ -589,13 +589,13 @@ int aicbsp_sdio_init(void)
 {
 
 	if (sdio_register_driver(&aicbsp_sdio_driver)) {
-		return -1;
+		return 0;
 	} else {
 		//may add mmc_rescan here
 	}
 	if (down_timeout(&aicbsp_probe_semaphore, msecs_to_jiffies(2000)) != 0){
 		printk("%s aicbsp_sdio_probe fail\r\n", __func__);
-		return -1;
+		return 0;
 	}
 
 	
@@ -665,7 +665,7 @@ int aicwf_sdio_flow_ctrl(struct aic_sdio_dev *sdiodev)
 	while (true) {
 		ret = aicwf_sdio_readb(sdiodev, sdiodev->sdio_reg.flow_ctrl_reg, &fc_reg);
 		if (ret) {
-			return -1;
+			return 0;
 		}
 
         if (sdiodev->chipid == PRODUCT_ID_AIC8801 || sdiodev->chipid == PRODUCT_ID_AIC8800DC ||
@@ -833,7 +833,7 @@ int aicwf_sdio_pwr_stctl(struct aic_sdio_dev *sdiodev, uint target)
 	int ret = 0;
 
 	if (sdiodev->bus_if->state == BUS_DOWN_ST) {
-		return -1;
+		return 0;
 	}
 
 	if (sdiodev->state == target) {
@@ -998,7 +998,7 @@ static int aicwf_sdio_tx_msg(struct aic_sdio_dev *sdiodev)
 		} else {
 			sdio_err("tx msg fc retry fail:%d, %d\n", buffer_cnt, len);
 			up(&sdiodev->tx_priv->cmd_txsema);
-			return -1;
+			return 0;
 		}
 	}else if(sdiodev->chipid == PRODUCT_ID_AIC8800DC || sdiodev->chipid == PRODUCT_ID_AIC8800DW){
 		err = aicwf_sdio_send_msg(sdiodev, payload, len);
@@ -1008,7 +1008,7 @@ static int aicwf_sdio_tx_msg(struct aic_sdio_dev *sdiodev)
 	} else {
 		sdio_err("tx msg fc retry fail:%d, %d\n", buffer_cnt, len);
 		up(&sdiodev->tx_priv->cmd_txsema);
-		return -1;
+		return 0;
 	}
 
 	sdiodev->tx_priv->cmd_txstate = false;
@@ -1098,7 +1098,7 @@ static int aicwf_sdio_bus_txdata(struct device *dev, struct sk_buff *pkt)
 	if (bus_if->state != BUS_UP_ST) {
 		sdio_err("bus_if stopped\n");
 		spin_unlock_bh(&sdiodev->tx_priv->txqlock);
-		return -1;
+		return 0;
 	}
 
 	atomic_inc(&sdiodev->tx_priv->tx_pktcnt);
@@ -1123,7 +1123,7 @@ static int aicwf_sdio_bus_txmsg(struct device *dev, u8 *msg, uint msglen)
 
 	if (bus_if->state != BUS_UP_ST) {
 		sdio_err("bus has stop\n");
-		return -1;
+		return 0;
 	}
 
 	complete(&bus_if->bustx_trgg);
@@ -1390,7 +1390,11 @@ int aicwf_sdio_busrx_thread(void *data)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 static void aicwf_sdio_bus_pwrctl(struct timer_list *t)
 {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 16, 0)
+	struct aic_sdio_dev *sdiodev = timer_container_of(sdiodev, t, timer);
+#else
 	struct aic_sdio_dev *sdiodev = from_timer(sdiodev, t, timer);
+#endif
 #else
 static void aicwf_sdio_bus_pwrctl(ulong data)
 {
@@ -1592,7 +1596,11 @@ void aicwf_sdio_pwrctl_timer(struct aic_sdio_dev *sdiodev, uint duration)
 	spin_lock_bh(&sdiodev->pwrctl_lock);
 	if (!duration) {
 		if (timer_pending(&sdiodev->timer))
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+			timer_delete_sync(&sdiodev->timer);
+#else
 			del_timer_sync(&sdiodev->timer);
+#endif
 	} else {
 		sdiodev->active_duration = duration;
 		timeout = msecs_to_jiffies(sdiodev->active_duration);

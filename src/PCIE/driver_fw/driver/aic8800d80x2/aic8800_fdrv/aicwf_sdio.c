@@ -29,7 +29,7 @@
 #include "mach/jzmmc.h"
 #endif /* CONFIG_INGENIC_T20 */
 #ifdef CONFIG_PLATFORM_ROCKCHIP
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif
 #include "aic_bsp_export.h"
 extern uint8_t scanning;

@@ -19,7 +19,7 @@
 
 #ifdef CONFIG_GPIO_WAKEUP
 #ifdef CONFIG_PLATFORM_ROCKCHIP
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #endif
 static int wakeup_enable;
 static u32 hostwake_irq_num;

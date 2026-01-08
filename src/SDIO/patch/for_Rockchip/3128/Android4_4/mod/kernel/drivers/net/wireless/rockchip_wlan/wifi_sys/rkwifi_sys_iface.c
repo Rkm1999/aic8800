@@ -8,7 +8,7 @@
 #include <linux/syscalls.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 
 extern int get_wifi_chip_type(void);
 

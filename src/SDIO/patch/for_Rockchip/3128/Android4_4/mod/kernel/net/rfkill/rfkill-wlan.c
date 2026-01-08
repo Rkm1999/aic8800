@@ -23,7 +23,7 @@
 #include <asm/gpio.h>
 #include <linux/regulator/consumer.h>
 #include <linux/delay.h>
-#include <linux/rfkill-wlan.h>
+#include <linux/rfkill.h>
 #include <linux/rfkill-bt.h>
 #include <linux/wakelock.h>
 #include <linux/interrupt.h>

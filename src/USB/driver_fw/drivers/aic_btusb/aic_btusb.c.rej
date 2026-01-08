@@ -1,0 +1,10 @@
+--- src/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
++++ src/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
+@@ -38,6 +38,7 @@
+ #include <linux/fs.h>
+ #include <linux/uaccess.h>
+ #include <linux/reboot.h>
++#include <linux/compat.h>
+ 
+ #include "aic_btusb.h"
+ 
